@@ -99,6 +99,16 @@ void loadCountry(countryADT c) {
         c->status[charToInt(h.condition)]++;
         c->firstProv = addOrEditProv(c->firstProv, h);
     }
+    struct Province * iter = c->firstProv;
+    while(iter != NULL) {
+        struct Apartment * iter2 = iter->first;
+        printf("Provincia %s hay -> Sin datos:%i Ocupada:%i Desocupada:%i Economicamente Inactiva:%i\n", iter->provName, iter->status[0], iter->status[1],iter->status[2],iter->status[3]);
+        while(iter2 != NULL) {
+            printf("\t->Departamento %s hay -> Sin datos:%i Ocupada:%i Desocupada:%i Economicamente Inactiva:%i\n", iter2->apName, iter2->status[0], iter2->status[1],iter2->status[2],iter2->status[3]);
+            iter2 = iter2->next;
+        }
+        iter = iter->next;
+    }
 }
 
 static struct Province * addOrEditProv(struct Province * p, struct Inhabitant h) {
