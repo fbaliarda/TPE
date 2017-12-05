@@ -14,7 +14,7 @@ int getline(char line[], int max) {
     int c;
     max = max - 1;
     while((c = getchar()) != EOF)
-	    {
+	{
 	    if(c == '\n')
 		    break;
 

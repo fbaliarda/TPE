@@ -2,36 +2,22 @@
 #define CENLIB_H
 
 typedef struct Country * countryADT;
-
+typedef struct Inhabitant * inhabitantADT;
 /* 
 **
 */
 countryADT newCountry(void);
-
 /*
 **
 */
-void loadCountry(const countryADT c);
-
+inhabitantADT newInhabitant(char condition, unsigned long homeID, char* apName, char* provName);
 /*
 **
 */
-void makeCountry(const countryADT c);
-
-/*
-**
-*/
-void makeProvince(const countryADT c);
-
-/*
-**
-*/
-void makeApartment(const countryADT c);
-
+void addInhabitant(countryADT c, inhabitantADT h);
 /*
 **
 */
 void freeCountry(const countryADT c);
-
 
 #endif
