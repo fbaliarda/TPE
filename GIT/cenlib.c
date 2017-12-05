@@ -28,10 +28,12 @@ struct Country {
     struct Province * firstProv;
 };
 
-struct Inhabitant parseData(char * str);
-void freeProvince(struct Province * p);
-void freeApartments(struct Apartment * apt);
-void * reserveMemory(size_t bytes, countryADT c);
+static struct Apartment * addOrEditApt(struct Apartment * a, struct Inhabitant h);
+static struct Province * addOrEditProv(struct Province * p, struct Inhabitant h);
+static struct Inhabitant parseData(char * str);
+static void freeProvince(struct Province * p);
+static void freeApartments(struct Apartment * apt);
+static void * reserveMemory(size_t bytes, countryADT c);
 
 void freeCountry(const countryADT c) {
     if(c == NULL) return;
@@ -39,7 +41,7 @@ void freeCountry(const countryADT c) {
     free(c);
 }
 
-void freeProvince(struct Province * p) {
+static void freeProvince(struct Province * p) {
     if(p == NULL) return;
     freeProvince(p->next);
     freeApartments(p->first);
@@ -47,14 +49,14 @@ void freeProvince(struct Province * p) {
     free(p);
 }
 
-void freeApartments(struct Apartment * apt) {
+static void freeApartments(struct Apartment * apt) {
     if(apt == NULL) return;
     freeApartments(apt->next);
     free(apt->apName);
     free(apt);
 }
 
-void * reserveMemory(size_t bytes, countryADT c) {
+static void * reserveMemory(size_t bytes, countryADT c) {
     void * r = calloc(1, bytes);
     if(r == NULL) {
         fprintf(stderr, "ERROR:::No se pudo reservar memoria.");
@@ -64,7 +66,7 @@ void * reserveMemory(size_t bytes, countryADT c) {
     return r;
 }
 
-struct Inhabitant parseData(char * str) {
+static struct Inhabitant parseData(char * str) {
     struct Inhabitant h;
     char seps[]   = ",\n";
     char * token = strtok(str, seps);
@@ -91,15 +93,54 @@ void loadCountry(countryADT c) {
         struct Inhabitant h = parseData(line);
         c->ctyQuantity++;
         c->status[charToInt(h.condition)]++;
-        c->firstProv = addOrEdit(c->firstProv, h);
+        c->firstProv = addOrEditProv(c->firstProv, h);
+        
+    }
+    struct Province * iter = c->firstProv;
+    while(iter != NULL) {
+        printf("La provincia es %s y el status es %i,%i,%i,%i\n", iter->provName, iter->status[0], iter->status[1], iter->status[2], iter->status[3]);
+        struct Apartment * iter2 = iter->first;
+        while(iter2 != NULL) {
+            printf("\tApartamento: %s con status: %i,%i,%i,%i\n", iter2->apName, iter2->status[0], iter2->status[1], iter2->status[2], iter2->status[3]);
+            iter2 = iter2->next;
+        }
+        iter = iter->next;
     }
 }
 
-struct Province * addOrEdit(struct Province * p, struct Inhabitant h) {
+static struct Province * addOrEditProv(struct Province * p, struct Inhabitant h) {
     if(p == NULL || (strcmp(h.provName, p->provName) < 0)) {
-
+        struct Province * aux = calloc(1, sizeof(*aux));
+        aux->provName = malloc(strlen(h.provName)+1);
+        strcpy(aux->provName, h.provName);
+        aux->prvQuantity = aux->status[charToInt(h.condition)] = 1;
+        aux->next = p;
+        aux->first = addOrEditApt(aux->first, h);
+        return aux;
     } else if(strcmp(h.provName, p->provName) == 0) {
         p->prvQuantity++;
         p->status[charToInt(h.condition)]++;
+        p->first = addOrEditApt(p->first, h);
+        return p;
     }
+    p->next = addOrEditProv(p->next, h);
+    return p;
+}
+
+static struct Apartment * addOrEditApt(struct Apartment * a, struct Inhabitant h) {
+    if(a == NULL || (strcmp(h.apName, a->apName) < 0)) {
+        
+        struct Apartment * aux = calloc(1, sizeof(*aux));
+        aux->apName = malloc(strlen(h.apName) + 1);
+        strcpy(aux->apName, h.apName);
+        aux->aptQuantity = aux->status[charToInt(h.condition)] = 1;
+        aux->next = a;
+        return aux;
+    } else if(strcmp(h.apName, a->apName) == 0) {
+        a->aptQuantity++;
+        a->status[charToInt(h.condition)]++;
+        return a;
+    }
+    a->next = addOrEditApt(a->next, h);
+    return a;
 }
