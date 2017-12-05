@@ -19,5 +19,9 @@ void addInhabitant(countryADT c, inhabitantADT h);
 **
 */
 void freeCountry(const countryADT c);
+/*
+**
+*/
+void freeInhabitant(inhabitantADT h);
 
 #endif

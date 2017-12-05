@@ -4,7 +4,7 @@
 struct Inhabitant {
     unsigned char condition;
     unsigned long homeID;
-    char apName[MAXLINE - BLOCKQTY], provName[MAXLINE - BLOCKQTY];
+    char apName[MAXLINE], provName[MAXLINE];
 };
 
 struct Apartment {
@@ -65,7 +65,7 @@ void * reserveMemory(size_t bytes, countryADT c) {
 }
 
 inhabitantADT newInhabitant(char condition, unsigned long homeID, char* apName, char* provName){
-    inhabitantADT h = calloc(1, sizeof(h));
+    inhabitantADT h = calloc(1,sizeof(*h));
     if(h == NULL) {
         fprintf(stderr, "ERROR:::No se pudo reservar memoria.");
         exit(1);
@@ -78,7 +78,7 @@ inhabitantADT newInhabitant(char condition, unsigned long homeID, char* apName, 
 }
 
 countryADT newCountry(void) {
-    countryADT c = reserveMemory(sizeof(c), NULL);
+    countryADT c = reserveMemory(sizeof(*c), NULL);
     return c;
 }
 
@@ -87,12 +87,17 @@ struct Province * addOrEdit(struct Province * p, struct Inhabitant h) {
 
     } else if(strcmp(h.provName, p->provName) == 0) {
         p->prvQuantity++;
-        p->status[charToInt(h.condition)]++;
+        p->status[h.condition]++;
     }
+    return p;
 }
 
 void addInhabitant(countryADT c, inhabitantADT h) {
     c->ctyQuantity++;
     c->status[charToInt(h->condition)]++;
     c->firstProv = addOrEdit(c->firstProv, *h);
+}
+
+void freeInhabitant(inhabitantADT h) {
+    free(h);
 }
