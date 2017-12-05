@@ -11,11 +11,27 @@ countryADT newCountry(void);
 /*
 **
 */
-void loadCountry(countryADT c);
+void loadCountry(const countryADT c);
+
+/*
+**
+*/
+void makeCountry(const countryADT c);
+
+/*
+**
+*/
+void makeProvince(const countryADT c);
+
+/*
+**
+*/
+void makeApartment(const countryADT c);
 
 /*
 **
 */
 void freeCountry(const countryADT c);
+
 
 #endif
