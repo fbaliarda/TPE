@@ -11,11 +11,11 @@ int main(void) {
 
     while((getline(line,MAXLINE)) != EOF) {
     	sscanf(line,"%c,%lu,%s,%s",&condition,&homeID,apName,provName);
-		inhabitant = newInhabitant(condition,homeID,apName,provName);
-		addInhabitant(country,inhabitant);
-		printf("%c,%lu,%s,%s",condition,homeID,apName,provName);
+	inhabitant = newInhabitant(condition,homeID,apName,provName);
+	addInhabitant(country,inhabitant);
+	printf("%c,%lu,%s,%s",condition,homeID,apName,provName);
+	freeInhabitant(inhabitant);
     }
-    freeInhabitant(inhabitant);
     freeCountry(country);
     return 0;
 }
