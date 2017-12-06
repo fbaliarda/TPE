@@ -99,5 +99,6 @@ void addInhabitant(countryADT c, inhabitantADT h) {
 }
 
 void freeInhabitant(inhabitantADT h) {
-    free(h);
+    if(h != NULL)
+        free(h);
 }
